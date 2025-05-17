@@ -1,2 +1,1 @@
-# DemoRepo
-Demo Repository to host some public facing content
+# This is my demo repo
