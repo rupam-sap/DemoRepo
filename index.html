@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BestRun AI Adoption Flywheel</title>
+    <style>
+        :root {
+            --bg: #030b16;
+            --sap-blue: #0070f2;
+            --sap-gold: #f0ab00;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: '72', Arial, sans-serif;
+            background: var(--bg);
+            color: white;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .flywheel-wrapper {
+            width: 90%;
+            max-width: 1000px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        /* Node Circles */
+        .node-container {
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 2px solid var(--sap-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.4s ease;
+            box-shadow: 0 0 15px rgba(0, 112, 242, 0.15);
+        }
+
+        .circle:hover {
+            border-color: var(--sap-gold);
+            box-shadow: 0 0 30px rgba(240, 171, 0, 0.3);
+        }
+
+        /* Responsive Connector SVG */
+        .connector-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .arrow-line {
+            stroke: var(--sap-blue);
+            stroke-width: 2;
+            fill: none;
+            transition: 0.3s;
+        }
+
+        /* Tooltip Popup */
+        .popup {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            background: #112240;
+            border-top: 4px solid var(--sap-gold);
+            border-radius: 8px;
+            padding: 18px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
+            transition: 0.3s ease;
+        }
+
+        .node-container:hover .popup {
+            visibility: visible;
+            opacity: 1;
+            bottom: 160px;
+        }
+
+        .popup h4 {
+            margin: 0 0 8px 0;
+            color: var(--sap-gold);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .popup p {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #ccd6f6;
+            margin-bottom: 12px;
+        }
+
+        .popup a {
+            color: var(--sap-blue);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.75rem;
+            border: 1px solid var(--sap-blue);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="flywheel-wrapper" id="flywheel">
+        <svg class="connector-svg" id="svg-canvas">
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#0070f2" />
+                </marker>
+            </defs>
+        </svg>
+
+        <div class="node-container" id="n1">
+            <div class="circle">LEARN</div>
+            <div class="popup">
+                <h4>01. Build Knowledge</h4>
+                <p>Master <b>Joule</b>, Explore embedded AI scenarios in <b>S/4HANA</b> and <b>SuccessFactors</b>.</p>
+                <a href="#">Launch Academy >></a>
+            </div>
+        </div>
+
+        <div class="node-container" id="n2">
+            <div class="circle">TRY</div>
+            <div class="popup">
+                <h4>02. Experimentation</h4>
+                <p>Test <b>Joule Agents</b> in a secure sandbox grounded in BestRun data.</p>
+                <a href="#">Open Playground >></a>
+            </div>
+        </div>
+
+        <div class="node-container" id="n3">
+            <div class="circle">BUILD</div>
+            <div class="popup">
+                <h4>03. Innovation</h4>
+                <p>Create custom skills in <b>Joule Studio</b> to solve complex cross-app tasks.</p>
+                <a href="#">SAP Build Studio >></a>
+            </div>
+        </div>
+
+        <div class="node-container" id="n4">
+            <div class="circle">SCALE</div>
+            <div class="popup">
+                <h4>04. Global Value</h4>
+                <p>Deploy governed AI assets globally using <b>SAP AI Core</b>.</p>
+                <a href="#">Go Live Hub >></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function drawConnectors() {
+            const svg = document.getElementById('svg-canvas');
+            const wrapper = document.getElementById('flywheel').getBoundingClientRect();
+            const nodes = [1, 2, 3, 4].map(i => document.getElementById(`n${i}`).getBoundingClientRect());
+
+            // Clear existing lines
+            while (svg.lastChild && svg.lastChild.tagName === 'line') svg.removeChild(svg.lastChild);
+
+            for (let i = 0; i < nodes.length - 1; i++) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+
+                // X1: Right edge of current circle
+                const x1 = nodes[i].right - wrapper.left;
+                // X2: Left edge of NEXT circle (minus 5px gap for the arrowhead)
+                const x2 = nodes[i + 1].left - wrapper.left - 5;
+
+                // Y is center of the circle
+                const y = (nodes[i].top + nodes[i].bottom) / 2 - wrapper.top;
+
+                line.setAttribute('x1', x1);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', x2);
+                line.setAttribute('y2', y);
+                line.setAttribute('class', 'arrow-line');
+                line.setAttribute('marker-end', 'url(#arrowhead)');
+
+                svg.appendChild(line);
+            }
+        }
+
+        window.addEventListener('resize', drawConnectors);
+        window.addEventListener('load', drawConnectors);
+        setTimeout(drawConnectors, 200); // Buffer for layout engine
+    </script>
+
+</body>
+
+</html>
